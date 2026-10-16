@@ -1,0 +1,9 @@
+{
+  // Static site: Cloudflare serves the Astro build output directly, no adapter/Worker code needed.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "vocal-remover-home",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}

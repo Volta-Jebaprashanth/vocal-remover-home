@@ -3,14 +3,18 @@
   "type": "module",
   "version": "1.0.0",
   "private": true,
-  "description": "Landing page for Vocal Remover — vocal-remover.voltajeba.com",
+  "description": "Landing page for Vocal Remover \u00e2\u20ac\u201d vocal-remover.voltajeba.com",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.4",
     "astro": "7.3.5"
+  },
+  "devDependencies": {
+    "wrangler": "4.147.0"
   }
 }

@@ -26,14 +26,15 @@ npm run preview   # serve the built site
 | `scripts/make-assets.mjs` | Regenerates the cropped logo, favicons and `public/og.png` |
 
 The download button always points at the newest GitHub release. The URL is fetched at build time and
-refreshed in the browser, so publishing a new release needs no change here. The deploy workflow also
-rebuilds daily.
+refreshed in the browser, so publishing a new release needs no change here.
 
-## Deploy (GitHub Pages)
+## Deploy (Cloudflare Workers, static assets)
 
-1. Push this folder to a GitHub repo (e.g. `Volta-Jebaprashanth/vocal-remover-home`), branch `main`.
-2. Repo → **Settings → Pages → Source: GitHub Actions**. The included workflow builds and deploys on every push.
-3. Repo → **Settings → Pages → Custom domain**: `vocal-remover.voltajeba.com` and tick **Enforce HTTPS**
-   (`public/CNAME` already contains the domain).
-4. At your DNS provider for `voltajeba.com`, add:
-   `CNAME  vocal-remover  →  volta-jebaprashanth.github.io`
+`wrangler.jsonc` serves the built `dist/` folder as static assets, so no Astro adapter is needed.
+
+- **Build command:** `npm run build`
+- **Deploy command:** `npx wrangler deploy`
+- **Custom domain:** in the Cloudflare dashboard, open the Worker and go to Settings → Domains & Routes →
+  Add → Custom domain → `vocal-remover.voltajeba.com`
+
+To deploy from your machine instead: `npm run deploy`
