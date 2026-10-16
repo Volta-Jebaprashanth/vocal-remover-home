@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://vocal-remover.voltajeba.com/sitemap-index.xml

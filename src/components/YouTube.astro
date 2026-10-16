@@ -1,0 +1,367 @@
+---
+import Icon from './Icon.astro';
+---
+
+<section class="section" id="youtube">
+  <div class="container yt-grid">
+    <div class="yt-copy" data-reveal>
+      <span class="eyebrow">New in v1.1</span>
+      <h2>Paste a link.<br /><span class="grad-text">Get the stems.</span></h2>
+      <p class="yt-lede">
+        You don't need the file first. Paste a YouTube video or playlist link and Vocal Remover pulls the audio
+        straight into the separation queue.
+      </p>
+
+      <div class="yt-modes">
+        <div class="mode glass spot">
+          <span class="mode-icon"><Icon name="layers" size={20} /></span>
+          <div>
+            <h3>Link → Queue</h3>
+            <p>Add a video or a whole playlist to the batch. Every track is downloaded, then separated.</p>
+          </div>
+        </div>
+        <div class="mode glass spot">
+          <span class="mode-icon"><Icon name="download" size={20} /></span>
+          <div>
+            <h3>YouTube Downloader tab</h3>
+            <p>Just want the file? Save audio as <b>MP3, WAV, FLAC or M4A</b>, or video in <b>High, 720p or 480p</b>.</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="yt-note">
+        <Icon name="zap" size={14} />
+        The downloader engine updates itself in the background, so you won't need a new app version when YouTube changes something.
+        Please only download content you have the rights to.
+      </p>
+    </div>
+
+    <div class="yt-visual" data-reveal style="--delay:.1s">
+      <div class="win glass">
+        <div class="win-bar">
+          <span class="tab-pill is-active">Vocal Remover</span>
+          <span class="tab-pill">YouTube Downloader</span>
+        </div>
+        <div class="win-body">
+          <label class="lbl">YouTube link</label>
+          <div class="url">
+            <Icon name="youtube" size={18} class="yt-ico" />
+            <span class="url-text" id="yt-url"></span><span class="caret"></span>
+            <span class="url-btn">Add</span>
+          </div>
+
+          <div class="lbl q-lbl"><span id="yt-count">0 songs added</span><span class="clear">Clear all</span></div>
+          <ul class="queue" id="yt-queue"></ul>
+
+          <div class="run" id="yt-run">Remove Vocals</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .yt-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(32px, 6vw, 80px);
+    align-items: center;
+  }
+  .yt-copy h2 {
+    font-size: clamp(2rem, 4.6vw, 3.25rem);
+    margin-top: 14px;
+  }
+  .yt-lede {
+    margin-top: 16px;
+    color: var(--muted-2);
+    font-size: 1.08rem;
+  }
+  .yt-modes {
+    display: grid;
+    gap: 12px;
+    margin-top: 28px;
+  }
+  .mode {
+    display: flex;
+    gap: 16px;
+    padding: 18px 20px;
+  }
+  .mode-icon {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    color: #ff6b88;
+    background: rgba(255, 77, 109, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(255, 77, 109, 0.3);
+  }
+  .mode h3 {
+    font-size: 1.05rem;
+  }
+  .mode p {
+    margin-top: 4px;
+    font-size: 0.9rem;
+    color: var(--muted-2);
+  }
+  .mode b {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .yt-note {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .yt-note :global(svg) {
+    flex: none;
+    margin-top: 3px;
+    color: var(--accent-hi);
+  }
+
+  /* --- mock window, styled after the real app (styles.py) --- */
+  .win {
+    background: rgba(20, 21, 31, 0.92);
+    box-shadow: 0 40px 90px -30px rgba(255, 77, 109, 0.25), 0 30px 80px -30px rgba(124, 92, 255, 0.5);
+  }
+  .win-bar {
+    display: flex;
+    gap: 4px;
+    padding: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .tab-pill {
+    padding: 7px 14px;
+    border-radius: 9px;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .tab-pill.is-active {
+    color: #fff;
+    background: var(--panel-2);
+    box-shadow: inset 0 0 0 1px #33364d;
+  }
+  .win-body {
+    padding: 22px;
+  }
+  .lbl {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #b7b9cc;
+  }
+  .clear {
+    color: var(--accent-hi);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .url {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 0 6px 0 12px;
+    height: 46px;
+    border-radius: 10px;
+    border: 1px solid var(--accent);
+    background: var(--panel-2);
+    box-shadow: 0 0 0 4px rgba(124, 92, 255, 0.12);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    overflow: hidden;
+  }
+  .url :global(.yt-ico) {
+    flex: none;
+    color: #ff4d6d;
+  }
+  .url-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text);
+  }
+  .caret {
+    flex: none;
+    width: 1.5px;
+    height: 18px;
+    background: var(--accent-hi);
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+  .url-btn {
+    flex: none;
+    margin-left: auto;
+    padding: 7px 14px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.8rem;
+  }
+  .q-lbl {
+    margin-top: 22px;
+  }
+  .queue {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 6px;
+    min-height: 178px;
+    border-radius: 10px;
+    border: 1px solid #33364d;
+    background: var(--panel-2);
+  }
+  .queue :global(li) {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    overflow: hidden;
+    animation: slideIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .queue :global(li + li) {
+    border-top: 1px solid #262a3d;
+  }
+  .queue :global(.t) {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .queue :global(.s) {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+  .queue :global(.s.ok) {
+    color: var(--green);
+  }
+  .queue :global(.bar) {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: var(--p, 0%);
+    background: var(--grad);
+    transition: width 0.3s linear;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(8px); }
+  }
+  .run {
+    margin-top: 18px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: #6f7290;
+    background: #2a2c3d;
+    transition: background 0.4s, color 0.4s, box-shadow 0.4s;
+  }
+  .run.is-ready {
+    color: #fff;
+    background: var(--accent);
+    box-shadow: 0 10px 30px -10px rgba(124, 92, 255, 0.8);
+  }
+
+  @media (max-width: 900px) {
+    .yt-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
+
+<script>
+  // Looping demo: type a playlist URL → tracks appear → each downloads → ready.
+  const urlEl = document.getElementById('yt-url')!;
+  const queue = document.getElementById('yt-queue')!;
+  const count = document.getElementById('yt-count')!;
+  const run = document.getElementById('yt-run')!;
+  const URL = 'youtube.com/playlist?list=PLs3ss10ns';
+  const tracks = ['Acoustic Session — Track 01.m4a', 'Acoustic Session — Track 02.m4a', 'Acoustic Session — Track 03.m4a'];
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  let started = false;
+
+  function row(title: string) {
+    const li = document.createElement('li');
+    li.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b8ea3" stroke-width="1.8" stroke-linecap="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/></svg><span class="t"></span><span class="s">queued</span><span class="bar"></span>`;
+    li.querySelector('.t')!.textContent = title;
+    return li;
+  }
+
+  function staticState() {
+    urlEl.textContent = URL;
+    queue.replaceChildren(...tracks.map((t) => {
+      const li = row(t);
+      const s = li.querySelector('.s')!;
+      s.textContent = '✓ ready';
+      s.classList.add('ok');
+      return li;
+    }));
+    count.textContent = `${tracks.length} songs added`;
+    run.textContent = `Process ${tracks.length} Songs`;
+    run.classList.add('is-ready');
+  }
+
+  async function loop() {
+    for (;;) {
+      urlEl.textContent = '';
+      queue.replaceChildren();
+      count.textContent = '0 songs added';
+      run.textContent = 'Remove Vocals';
+      run.classList.remove('is-ready');
+      await wait(700);
+      for (const ch of URL) {
+        urlEl.textContent += ch;
+        await wait(38 + Math.random() * 40);
+      }
+      await wait(500);
+      const rows = tracks.map(row);
+      for (const r of rows) {
+        queue.appendChild(r);
+        await wait(260);
+      }
+      count.textContent = `${tracks.length} songs added`;
+      for (const r of rows) {
+        const s = r.querySelector('.s')!;
+        const bar = r.querySelector<HTMLElement>('.bar')!;
+        for (let p = 0; p <= 100; p += 10) {
+          s.textContent = `downloading ${p}%`;
+          bar.style.setProperty('--p', `${p}%`);
+          await wait(70);
+        }
+        s.textContent = '✓ ready';
+        s.classList.add('ok');
+        bar.style.opacity = '0';
+      }
+      run.textContent = `Process ${tracks.length} Songs`;
+      run.classList.add('is-ready');
+      await wait(3200);
+    }
+  }
+
+  if (reduced) staticState();
+  else
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !started) {
+        started = true;
+        loop();
+      }
+    }).observe(queue);
+</script>

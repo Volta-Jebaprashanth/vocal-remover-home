@@ -1,0 +1,229 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo-trim.png';
+import Icon from './Icon.astro';
+import { CONTACT, REPO_URL } from '../data/site';
+
+interface Props {
+  downloadUrl: string;
+}
+const { downloadUrl } = Astro.props;
+
+const links = [
+  { href: '#features', label: 'Features' },
+  { href: '#stems', label: 'Stems' },
+  { href: '#youtube', label: 'YouTube' },
+  { href: '#engine', label: 'How it works' },
+  { href: '#faq', label: 'FAQ' },
+  { href: '#contact', label: 'Contact' },
+];
+---
+
+<header class="header" id="top">
+  <div class="container header-inner">
+    <a href="#top" class="brand" aria-label="Vocal Remover home">
+      <Image src={logo} alt="Vocal Remover" width={132} densities={[1, 2]} loading="eager" />
+    </a>
+
+    <nav class="nav" aria-label="Primary">
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+
+    <div class="header-actions">
+      <a class="icon-link" href={`mailto:${CONTACT.email}`} aria-label="Email Volta">
+        <Icon name="mail" size={18} />
+      </a>
+      <a class="icon-link" href={REPO_URL} target="_blank" rel="noopener" aria-label="GitHub repository">
+        <Icon name="github" size={18} />
+      </a>
+      <a class="btn btn-primary btn-sm" href={downloadUrl} data-download>
+        <Icon name="download" size={18} /><span>Download</span>
+      </a>
+      <button class="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+        <Icon name="menu" size={22} class="i-open" />
+        <Icon name="x" size={22} class="i-close" />
+      </button>
+    </div>
+  </div>
+
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile">
+    {links.map((l) => <a href={l.href}>{l.label}</a>)}
+    <div class="mobile-contact">
+      <a href={`mailto:${CONTACT.email}`}><Icon name="mail" size={18} />{CONTACT.email}</a>
+      <a href={CONTACT.phoneHref}><Icon name="phone" size={18} />{CONTACT.phone}</a>
+      <a href={CONTACT.linkedin} target="_blank" rel="noopener"><Icon name="linkedin" size={18} />LinkedIn</a>
+    </div>
+  </nav>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: var(--header-h);
+    transition: background 0.3s, border-color 0.3s;
+    border-bottom: 1px solid transparent;
+  }
+  .header.scrolled {
+    background: rgba(7, 7, 13, 0.72);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border-bottom-color: var(--line);
+  }
+  .header-inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .brand img {
+    width: 132px;
+    height: auto;
+    filter: drop-shadow(0 0 14px rgba(124, 92, 255, 0.45));
+  }
+  .nav {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+  }
+  .nav a {
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: var(--muted-2);
+    transition: color 0.2s, background 0.2s;
+  }
+  .nav a:hover {
+    color: #fff;
+    background: rgba(124, 92, 255, 0.12);
+  }
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .icon-link {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    color: var(--muted-2);
+    transition: color 0.2s, background 0.2s;
+  }
+  .icon-link:hover {
+    color: #fff;
+    background: rgba(124, 92, 255, 0.14);
+  }
+  .btn-sm {
+    --h: 40px;
+    padding: 0 16px;
+    font-size: 0.9rem;
+    border-radius: 11px;
+    margin-left: 6px;
+  }
+  .menu-btn {
+    display: none;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    border: 1px solid var(--line);
+    background: rgba(20, 21, 31, 0.7);
+    color: var(--text);
+    cursor: pointer;
+  }
+  .menu-btn :global(.i-close) {
+    display: none;
+  }
+  .header.open .menu-btn :global(.i-open) {
+    display: none;
+  }
+  .header.open .menu-btn :global(.i-close) {
+    display: block;
+  }
+  .mobile-nav {
+    display: none;
+  }
+
+  @media (max-width: 1020px) {
+    .nav {
+      display: none;
+    }
+    .header-actions {
+      margin-left: auto;
+    }
+    .menu-btn {
+      display: grid;
+    }
+    .mobile-nav {
+      position: absolute;
+      top: var(--header-h);
+      left: 0;
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 12px var(--gutter) 24px;
+      background: rgba(7, 7, 13, 0.96);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+      transform: translateY(-8px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s, transform 0.25s, visibility 0.25s;
+    }
+    .header.open .mobile-nav {
+      opacity: 1;
+      transform: none;
+      visibility: visible;
+    }
+    .header.open {
+      background: rgba(7, 7, 13, 0.96);
+    }
+    .mobile-nav > a {
+      padding: 14px 4px;
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .mobile-contact {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 18px;
+      font-size: 0.9rem;
+      color: var(--muted-2);
+    }
+    .mobile-contact a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  }
+  @media (max-width: 480px) {
+    .icon-link {
+      display: none;
+    }
+    .btn-sm span {
+      display: none;
+    }
+    .btn-sm {
+      padding: 0 12px;
+    }
+  }
+</style>
+
+<script>
+  const header = document.querySelector('.header') as HTMLElement;
+  const btn = header.querySelector('.menu-btn') as HTMLButtonElement;
+  const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 10);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  const setOpen = (open: boolean) => {
+    header.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', String(open));
+  };
+  btn.addEventListener('click', () => setOpen(!header.classList.contains('open')));
+  header.querySelectorAll('.mobile-nav a[href^="#"]').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+</script>

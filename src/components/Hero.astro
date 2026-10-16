@@ -1,0 +1,316 @@
+---
+import Icon from './Icon.astro';
+import { REPO_URL, type Release } from '../data/site';
+
+interface Props {
+  release: Release;
+}
+const { release } = Astro.props;
+---
+
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <a class="chip hero-chip" href="#youtube" data-reveal>
+        <span class="dot"></span>
+        <span>v<span data-version>{release.version}</span> · Now with YouTube support</span>
+        <Icon name="arrow" size={14} />
+      </a>
+
+      <h1 data-reveal style="--delay:.05s">
+        Pull any song <span class="grad-text">apart</span> with AI.
+      </h1>
+
+      <p class="lede" data-reveal style="--delay:.1s">
+        Turn any track into a clean instrumental, or split it into vocals, drums, bass, piano and more.
+        A free Windows app that runs on <em>your</em> PC. Nothing is uploaded, and you don't need Python, ffmpeg or any setup.
+      </p>
+
+      <div class="hero-cta" data-reveal style="--delay:.15s">
+        <a class="btn btn-primary btn-lg" href={release.url} data-download>
+          <Icon name="windows" size={20} />
+          Download for Windows
+        </a>
+        <a class="btn btn-ghost btn-lg" href={REPO_URL} target="_blank" rel="noopener">
+          <Icon name="github" size={20} />
+          View on GitHub
+        </a>
+      </div>
+
+      <p class="hero-meta" data-reveal style="--delay:.2s">
+        <span>Windows 10 / 11 · 64-bit</span>
+        <span class="sep">/</span>
+        <span>v<span data-version>{release.version}</span> · <span data-size>{release.sizeMB ?? '—'}</span> MB</span>
+        <span class="sep">/</span>
+        <span>Free forever</span>
+      </p>
+
+      <ul class="hero-ticks" data-reveal style="--delay:.25s">
+        <li><Icon name="check" size={16} />No account</li>
+        <li><Icon name="check" size={16} />No uploads</li>
+        <li><Icon name="check" size={16} />No admin prompt</li>
+      </ul>
+    </div>
+
+    <div class="hero-visual" data-reveal style="--delay:.1s">
+      <div class="console glass">
+        <div class="console-bar">
+          <span class="lights"><i></i><i></i><i></i></span>
+          <span class="console-title">separate --stems 5 --quality best</span>
+          <span class="console-live"><span class="dot"></span>LIVE</span>
+        </div>
+        <canvas class="viz" id="hero-viz" aria-label="Animation: one song waveform flows into an AI core and splits into five stems: vocals, drums, bass, piano and other." role="img"></canvas>
+        <div class="console-foot">
+          <span><Icon name="cpu" size={14} /> Spleeter · on-device</span>
+          <span><Icon name="lock" size={14} /> 0 bytes uploaded</span>
+        </div>
+      </div>
+      <div class="hero-ring" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <div class="container">
+    <dl class="stats" data-reveal>
+      <div><dt>2 · 4 · 5</dt><dd>stem modes</dd></div>
+      <div><dt>3</dt><dd>quality presets</dd></div>
+      <div><dt>WAV · MP3 · FLAC</dt><dd>export formats</dd></div>
+      <div><dt>0</dt><dd>things to configure</dd></div>
+    </dl>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding-top: clamp(40px, 7vw, 88px);
+    padding-bottom: clamp(48px, 7vw, 80px);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+    gap: clamp(32px, 5vw, 64px);
+    align-items: center;
+  }
+  .hero-chip {
+    color: var(--text);
+    transition: border-color 0.2s;
+  }
+  .hero-chip:hover {
+    border-color: var(--line-strong);
+  }
+  h1 {
+    margin-top: 22px;
+    font-size: clamp(2.6rem, 6.4vw, 4.9rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+  }
+  .lede {
+    margin-top: 22px;
+    font-size: clamp(1.02rem, 1.5vw, 1.18rem);
+    color: var(--muted-2);
+    max-width: 560px;
+  }
+  .lede em {
+    font-style: normal;
+    color: #fff;
+  }
+  .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 32px;
+  }
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    margin-top: 18px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .hero-meta .sep {
+    color: rgba(124, 92, 255, 0.6);
+  }
+  .hero-ticks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    list-style: none;
+    padding: 0;
+    margin: 22px 0 0;
+    font-size: 0.9rem;
+    color: var(--muted-2);
+  }
+  .hero-ticks li {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .hero-ticks :global(svg) {
+    color: var(--green);
+  }
+
+  .hero-visual {
+    position: relative;
+  }
+  .console {
+    position: relative;
+    z-index: 1;
+    box-shadow:
+      0 30px 80px -30px rgba(124, 92, 255, 0.55),
+      0 0 0 1px rgba(124, 92, 255, 0.12);
+  }
+  .console-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+  .lights {
+    display: flex;
+    gap: 6px;
+  }
+  .lights i {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #2a2c3d;
+  }
+  .lights i:nth-child(1) { background: #d946ef; opacity: 0.7; }
+  .lights i:nth-child(2) { background: #7c5cff; opacity: 0.7; }
+  .lights i:nth-child(3) { background: #3b5bff; opacity: 0.7; }
+  .console-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .console-title::before {
+    content: '$ ';
+    color: var(--accent-hi);
+  }
+  .console-live {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--green);
+  }
+  .viz {
+    width: 100%;
+    aspect-ratio: 16 / 11;
+  }
+  .console-foot {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+  .console-foot span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .hero-ring {
+    position: absolute;
+    inset: -12% -8%;
+    z-index: 0;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent, rgba(217, 70, 239, 0.25), transparent 30%, rgba(59, 91, 255, 0.25), transparent 60%);
+    filter: blur(60px);
+    animation: spin 18s linear infinite;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: clamp(48px, 7vw, 80px) 0 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(20, 21, 31, 0.55);
+    backdrop-filter: blur(10px);
+  }
+  .stats div {
+    padding: 22px 24px;
+    border-left: 1px solid var(--line);
+  }
+  .stats div:first-child {
+    border-left: 0;
+  }
+  .stats dt {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.4vw, 1.6rem);
+    font-weight: 700;
+    color: #fff;
+  }
+  .stats dd {
+    margin: 4px 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  @media (max-width: 960px) {
+    .hero-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .hero-copy {
+      text-align: center;
+    }
+    .lede {
+      margin-inline: auto;
+    }
+    .hero-cta,
+    .hero-meta,
+    .hero-ticks {
+      justify-content: center;
+    }
+  }
+  @media (max-width: 720px) {
+    .stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .stats div:nth-child(3) {
+      border-left: 0;
+    }
+    .stats div:nth-child(n + 3) {
+      border-top: 1px solid var(--line);
+    }
+  }
+  @media (max-width: 480px) {
+    .hero-cta .btn {
+      width: 100%;
+    }
+    .viz {
+      aspect-ratio: 4 / 3.6;
+    }
+    .console-foot span:last-child {
+      display: none;
+    }
+    .hero-meta .sep {
+      display: none;
+    }
+    .hero-meta {
+      gap: 4px 14px;
+    }
+  }
+</style>
+
+<script>
+  import { createSeparationViz } from '../scripts/separation-viz';
+  const c = document.getElementById('hero-viz') as HTMLCanvasElement;
+  createSeparationViz(c, { stems: ['vocals', 'drums', 'bass', 'piano', 'other'] });
+</script>

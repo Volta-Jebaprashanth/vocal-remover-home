@@ -1,0 +1,16 @@
+{
+  "name": "vocal-remover-home",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Landing page for Vocal Remover — vocal-remover.voltajeba.com",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "3.7.4",
+    "astro": "7.3.5"
+  }
+}

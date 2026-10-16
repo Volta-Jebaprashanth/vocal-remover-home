@@ -1,0 +1,220 @@
+---
+import { Image } from 'astro:assets';
+import icon from '../assets/icon.png';
+import Icon from './Icon.astro';
+import { CONTACT, REPO_URL, RELEASES_URL, type Release } from '../data/site';
+
+interface Props {
+  release: Release;
+}
+const { release } = Astro.props;
+
+const channels = [
+  { icon: 'mail', label: 'Email', value: CONTACT.email, href: `mailto:${CONTACT.email}`, color: '#d946ef' },
+  { icon: 'phone', label: 'Phone', value: CONTACT.phone, href: CONTACT.phoneHref, color: '#7c5cff' },
+  { icon: 'whatsapp', label: 'WhatsApp', value: 'Chat on WhatsApp', href: CONTACT.whatsapp, color: '#25d366' },
+  { icon: 'linkedin', label: 'LinkedIn', value: `in/${CONTACT.linkedinHandle}`, href: CONTACT.linkedin, color: '#0a66c2' },
+] as const;
+---
+
+<section class="section" id="download">
+  <div class="container">
+    <div class="cta glass" data-reveal>
+      <div class="cta-glow" aria-hidden="true"></div>
+      <Image src={icon} alt="" width={120} height={120} class="cta-icon" />
+      <h2>Ready to pull your first song apart?</h2>
+      <p>Free for Windows 10 and 11. Installs in a few clicks, with no admin rights needed.</p>
+      <div class="cta-actions">
+        <a class="btn btn-primary btn-lg" href={release.url} data-download>
+          <Icon name="windows" size={20} />
+          <span>Download v<span data-version>{release.version}</span></span>
+        </a>
+        <a class="btn btn-ghost btn-lg" href={RELEASES_URL} target="_blank" rel="noopener">
+          All releases
+          <Icon name="arrow" size={18} />
+        </a>
+      </div>
+      <p class="cta-meta"><span data-size>{release.sizeMB ?? '—'}</span> MB · .exe installer · per-user install</p>
+    </div>
+  </div>
+</section>
+
+<section class="section contact-section" id="contact">
+  <div class="container contact-grid">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">Contact</span>
+      <h2>Let's talk.</h2>
+      <p>
+        Questions, bug reports, feature ideas, collaborations, or a project you'd like built? I'm <b>{CONTACT.name}</b>, the developer behind Vocal Remover. Reach out any way you like.
+      </p>
+      <a class="btn btn-ghost gh" href={REPO_URL} target="_blank" rel="noopener">
+        <Icon name="github" size={18} />
+        Star the project on GitHub
+      </a>
+    </div>
+
+    <div class="channels">
+      {
+        channels.map((c, i) => (
+          <a
+            class="channel glass spot"
+            href={c.href}
+            target={c.href.startsWith('http') ? '_blank' : undefined}
+            rel={c.href.startsWith('http') ? 'noopener' : undefined}
+            style={`--c:${c.color}; --delay:${i * 0.07}s`}
+            data-reveal
+          >
+            <span class="ch-icon">
+              <Icon name={c.icon} size={22} />
+            </span>
+            <span class="ch-text">
+              <span class="ch-label">{c.label}</span>
+              <span class="ch-value">{c.value}</span>
+            </span>
+            <Icon name="arrow" size={18} class="ch-arrow" />
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    position: relative;
+    text-align: center;
+    padding: clamp(48px, 7vw, 88px) clamp(20px, 5vw, 64px);
+    border-color: rgba(124, 92, 255, 0.35);
+  }
+  .cta-glow {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(60% 80% at 50% 0%, rgba(124, 92, 255, 0.35), transparent 70%),
+      radial-gradient(40% 60% at 10% 100%, rgba(217, 70, 239, 0.25), transparent 70%),
+      radial-gradient(40% 60% at 90% 100%, rgba(59, 91, 255, 0.3), transparent 70%);
+    pointer-events: none;
+  }
+  .cta > :not(.cta-glow) {
+    position: relative;
+  }
+  .cta :global(.cta-icon) {
+    width: 104px;
+    height: auto;
+    margin: 0 auto;
+    filter: drop-shadow(0 10px 40px rgba(124, 92, 255, 0.8));
+    animation: float 6s ease-in-out infinite;
+  }
+  @keyframes float {
+    50% { transform: translateY(-10px); }
+  }
+  .cta h2 {
+    margin-top: 24px;
+    font-size: clamp(1.9rem, 4.4vw, 3rem);
+  }
+  .cta > p {
+    margin: 14px auto 0;
+    max-width: 520px;
+    color: var(--muted-2);
+    font-size: 1.05rem;
+  }
+  .cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 32px;
+  }
+  .cta .cta-meta {
+    margin-top: 16px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .contact-section {
+    padding-top: 0;
+  }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(28px, 5vw, 64px);
+    align-items: center;
+  }
+  .contact-grid .section-head {
+    margin-bottom: 0;
+  }
+  .contact-grid b {
+    color: #fff;
+    font-weight: 600;
+  }
+  .gh {
+    margin-top: 28px;
+    --h: 46px;
+    font-size: 0.92rem;
+  }
+  .channels {
+    display: grid;
+    gap: 12px;
+  }
+  .channel {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+    transition: transform 0.25s, border-color 0.25s;
+  }
+  .channel:hover {
+    transform: translateX(4px);
+  }
+  .ch-icon {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 13px;
+    color: #fff;
+    background: color-mix(in srgb, var(--c) 22%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 50%, transparent), 0 0 26px -8px var(--c);
+  }
+  .ch-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .ch-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .ch-value {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.08rem;
+    color: #fff;
+    overflow-wrap: anywhere;
+  }
+  .channel :global(.ch-arrow) {
+    margin-left: auto;
+    flex: none;
+    color: var(--muted);
+    transition: color 0.25s, transform 0.25s;
+  }
+  .channel:hover :global(.ch-arrow) {
+    color: #fff;
+    transform: translateX(3px);
+  }
+  @media (max-width: 900px) {
+    .contact-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 480px) {
+    .cta-actions .btn {
+      width: 100%;
+    }
+  }
+</style>

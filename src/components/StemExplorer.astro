@@ -1,0 +1,382 @@
+---
+import Icon from './Icon.astro';
+
+// Mirrors STEM_NAMES / STEM_MODE_LABELS in the app's common.py.
+const modes = [
+  {
+    id: '2',
+    title: '2 stems',
+    label: 'Vocals + Instrumental',
+    stems: ['vocals', 'instrumental'],
+    uses: ['Karaoke & backing tracks', 'Isolate a vocal for a cover or remix', 'Practise singing over the original'],
+    ram: false,
+  },
+  {
+    id: '4',
+    title: '4 stems',
+    label: 'Vocals + Drums + Bass + Other',
+    stems: ['vocals', 'drums', 'bass', 'other'],
+    uses: ['Drum or bass play-along tracks', 'DJ edits & mashups', 'Sampling individual parts'],
+    ram: true,
+  },
+  {
+    id: '5',
+    title: '5 stems',
+    label: 'Vocals + Drums + Bass + Piano + Other',
+    stems: ['vocals', 'drums', 'bass', 'piano', 'other'],
+    uses: ['Piano transcription & covers', 'Full remix sessions', 'Music production & study'],
+    ram: true,
+  },
+];
+
+---
+
+<section class="section" id="stems">
+  <div class="container">
+    <div class="section-head center" data-reveal>
+      <span class="eyebrow">Separation modes</span>
+      <h2>Choose your split.</h2>
+      <p>
+        Pick how many stems you want, then choose which ones to save. It works like the
+        "Tracks to save" checkboxes in the app, so try it below.
+      </p>
+    </div>
+
+    <div class="explorer glass" data-reveal>
+      <div class="tabs" role="tablist" aria-label="Stem mode">
+        {
+          modes.map((m, i) => (
+            <button
+              role="tab"
+              class="tab"
+              id={`tab-${m.id}`}
+              aria-selected={i === 0 ? 'true' : 'false'}
+              data-mode={m.id}
+              data-stems={m.stems.join(',')}
+            >
+              <span class="tab-n">{m.title}</span>
+              <span class="tab-l">{m.label}</span>
+            </button>
+          ))
+        }
+        <span class="tab-ink" aria-hidden="true"></span>
+      </div>
+
+      <div class="explorer-body">
+        <div class="explorer-viz">
+          <canvas id="stem-viz" role="img" aria-label="Animated preview of the selected stem mode"></canvas>
+        </div>
+
+        <aside class="explorer-side">
+          <h3 class="side-title">Tracks to save</h3>
+          <div class="toggles" id="stem-toggles"></div>
+
+          <h3 class="side-title">Great for</h3>
+          {
+            modes.map((m, i) => (
+              <ul class="uses" data-uses={m.id} hidden={i !== 0}>
+                {m.uses.map((u) => (
+                  <li>
+                    <Icon name="sparkles" size={16} />
+                    {u}
+                  </li>
+                ))}
+              </ul>
+            ))
+          }
+
+          <p class="ram" id="ram-note" hidden>
+            <Icon name="ram" size={16} />
+            4 and 5-stem modes use noticeably more RAM. 8&nbsp;GB+ is recommended for long songs.
+          </p>
+        </aside>
+      </div>
+    </div>
+  </div>
+</section>
+
+<template id="toggle-tpl">
+  <label class="toggle">
+    <input type="checkbox" checked />
+    <span class="box"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+    <span class="swatch"></span>
+    <span class="name"></span>
+  </label>
+</template>
+
+<style>
+  .explorer {
+    padding: 10px;
+  }
+  .tabs {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    padding: 6px;
+    border-radius: 14px;
+    background: rgba(7, 7, 13, 0.55);
+    border: 1px solid var(--line);
+  }
+  .tab {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 12px 16px;
+    border: 0;
+    border-radius: 10px;
+    background: none;
+    color: var(--muted);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: color 0.25s;
+  }
+  .tab:hover {
+    color: var(--text);
+  }
+  .tab[aria-selected='true'] {
+    color: #fff;
+  }
+  .tab-n {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+  .tab-l {
+    font-size: 0.78rem;
+    color: inherit;
+    opacity: 0.8;
+  }
+  .tab-ink {
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    left: 6px;
+    width: calc((100% - 24px) / 3);
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(217, 70, 239, 0.28), rgba(124, 92, 255, 0.35) 50%, rgba(59, 91, 255, 0.3));
+    box-shadow: inset 0 0 0 1px rgba(155, 133, 255, 0.5), 0 0 30px -6px rgba(124, 92, 255, 0.7);
+    transition: transform 0.45s cubic-bezier(0.3, 0.8, 0.2, 1);
+  }
+  .explorer-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .explorer-viz {
+    border-radius: 14px;
+    background: rgba(7, 7, 13, 0.45);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+  #stem-viz {
+    width: 100%;
+    height: 100%;
+    min-height: 380px;
+  }
+  .explorer-side {
+    padding: 20px;
+    border-radius: 14px;
+    background: rgba(7, 7, 13, 0.45);
+    border: 1px solid var(--line);
+  }
+  .side-title {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .side-title:not(:first-child) {
+    margin-top: 24px;
+  }
+  .toggles {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .toggles :global(.toggle) {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: rgba(28, 30, 43, 0.6);
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.2s, background 0.2s, opacity 0.2s;
+  }
+  .toggles :global(.toggle:hover) {
+    border-color: var(--line-strong);
+  }
+  .toggles :global(input) {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .toggles :global(.box) {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 1.5px solid #3d4160;
+    color: transparent;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+  }
+  .toggles :global(input:checked + .box) {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .toggles :global(input:focus-visible + .box) {
+    outline: 2px solid var(--accent-hi);
+    outline-offset: 2px;
+  }
+  .toggles :global(.swatch) {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--c);
+    box-shadow: 0 0 10px var(--c);
+  }
+  .toggles :global(.name) {
+    font-size: 0.92rem;
+  }
+  .toggles :global(.toggle:has(input:not(:checked))) {
+    opacity: 0.55;
+  }
+  .uses {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 0.92rem;
+    color: var(--muted-2);
+  }
+  .uses[hidden] {
+    display: none;
+  }
+  .uses li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .uses :global(svg) {
+    flex: none;
+    margin-top: 3px;
+    color: var(--accent-hi);
+  }
+  .ram {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(250, 204, 21, 0.06);
+    border: 1px solid rgba(250, 204, 21, 0.2);
+    color: #e9d9a0;
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+  .ram :global(svg) {
+    flex: none;
+    margin-top: 2px;
+  }
+  .ram[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 860px) {
+    .explorer-body {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    #stem-viz {
+      min-height: 320px;
+    }
+  }
+  @media (max-width: 560px) {
+    .tab {
+      padding: 10px;
+      align-items: center;
+      text-align: center;
+    }
+    .tab-l {
+      display: none;
+    }
+    #stem-viz {
+      min-height: 280px;
+    }
+  }
+</style>
+
+<script>
+  import { createSeparationViz, STEM_META, type StemKey } from '../scripts/separation-viz';
+
+  const canvas = document.getElementById('stem-viz') as HTMLCanvasElement;
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>('#stems .tab')];
+  const ink = document.querySelector('#stems .tab-ink') as HTMLElement;
+  const togglesEl = document.getElementById('stem-toggles')!;
+  const tpl = document.getElementById('toggle-tpl') as HTMLTemplateElement;
+  const ram = document.getElementById('ram-note')!;
+
+  // Default like the app: everything checked except vocals.
+  const initial = tabs[0].dataset.stems!.split(',') as StemKey[];
+  const viz = createSeparationViz(canvas, { stems: initial, muted: { vocals: true } });
+
+  function renderToggles(stems: StemKey[]) {
+    togglesEl.replaceChildren();
+    stems.forEach((key) => {
+      const node = tpl.content.firstElementChild!.cloneNode(true) as HTMLLabelElement;
+      const input = node.querySelector('input')!;
+      node.querySelector<HTMLElement>('.swatch')!.style.setProperty('--c', STEM_META[key].color);
+      node.querySelector('.name')!.textContent = STEM_META[key].label;
+      input.checked = key !== 'vocals';
+      viz.setMuted(key, !input.checked);
+      input.addEventListener('change', () => {
+        // At least one stem must stay selected — same rule as the app.
+        const boxes = [...togglesEl.querySelectorAll('input')];
+        if (!boxes.some((b) => b.checked)) {
+          input.checked = true;
+          return;
+        }
+        viz.setMuted(key, !input.checked);
+      });
+      togglesEl.appendChild(node);
+    });
+  }
+
+  function select(i: number) {
+    tabs.forEach((t, j) => {
+      t.setAttribute('aria-selected', String(i === j));
+      t.tabIndex = i === j ? 0 : -1;
+    });
+    ink.style.transform = `translateX(calc(${i * 100}% + ${i * 6}px))`;
+    const stems = tabs[i].dataset.stems!.split(',') as StemKey[];
+    viz.setStems(stems);
+    renderToggles(stems);
+    document.querySelectorAll<HTMLElement>('[data-uses]').forEach((ul) => (ul.hidden = ul.dataset.uses !== tabs[i].dataset.mode));
+    ram.hidden = tabs[i].dataset.mode === '2';
+  }
+
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => select(i));
+    t.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      const n = (i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length;
+      tabs[n].focus();
+      select(n);
+    });
+  });
+  select(0);
+</script>

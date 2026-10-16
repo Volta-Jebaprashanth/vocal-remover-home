@@ -1,0 +1,47 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import StemExplorer from '../components/StemExplorer.astro';
+import Features from '../components/Features.astro';
+import YouTube from '../components/YouTube.astro';
+import Screenshots from '../components/Screenshots.astro';
+import Engine from '../components/Engine.astro';
+import FAQ from '../components/FAQ.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+import { getLatestRelease, REPO } from '../data/site';
+
+const release = await getLatestRelease();
+---
+
+<Layout>
+  <Header downloadUrl={release.url} />
+  <main>
+    <Hero release={release} />
+    <Features />
+    <StemExplorer />
+    <YouTube />
+    <Screenshots />
+    <Engine />
+    <FAQ />
+    <Contact release={release} />
+  </main>
+  <Footer />
+
+  <script define:vars={{ REPO }} is:inline>
+    // Keep download links/version fresh between deploys: ask GitHub for the latest release.
+    fetch(`https://api.github.com/repos/${REPO}/releases/latest`)
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((rel) => {
+        const asset = (rel.assets || []).find((a) => /\.exe$/i.test(a.name));
+        if (!asset) return;
+        const version = String(rel.tag_name).replace(/^v/, '');
+        const size = Math.round(asset.size / 1024 / 1024);
+        document.querySelectorAll('[data-download]').forEach((a) => (a.href = asset.browser_download_url));
+        document.querySelectorAll('[data-version]').forEach((el) => (el.textContent = version));
+        document.querySelectorAll('[data-size]').forEach((el) => (el.textContent = size));
+      })
+      .catch(() => {});
+  </script>
+</Layout>

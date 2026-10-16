@@ -1,0 +1,113 @@
+---
+import { Image } from 'astro:assets';
+import s1 from '../assets/screenshot-1.png';
+import s2 from '../assets/screenshot-2.png';
+import s3 from '../assets/screenshot-3.png';
+
+const shots = [
+  { src: s1, alt: 'Vocal Remover main window with an empty drag-and-drop zone', cap: 'Drop songs in' },
+  { src: s2, alt: 'Two songs queued with advanced options open: separation mode, quality, format and tracks to save', cap: 'Tune it (optional)' },
+  { src: s3, alt: 'Batch finished, with a green check and output path for each processed song', cap: 'Get your stems' },
+];
+---
+
+<section class="section shots-section">
+  <div class="container">
+    <div class="section-head center" data-reveal>
+      <span class="eyebrow">The app</span>
+      <h2>Clean, dark and focused.</h2>
+      <p>One window: drop zone, queue, a collapsible Advanced panel and a big button.</p>
+    </div>
+
+    <div class="shots">
+      {
+        shots.map((s, i) => (
+          <figure class={`shot shot-${i}`} data-reveal style={`--delay:${i * 0.1}s`}>
+            <div class="frame">
+              <Image src={s.src} alt={s.alt} widths={[300, 600]} sizes="(max-width: 720px) 80vw, 340px" loading="lazy" />
+            </div>
+            <figcaption>
+              <span>0{i + 1}</span>
+              {s.cap}
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .shots {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 340px));
+    justify-content: center;
+    gap: clamp(16px, 3vw, 36px);
+    perspective: 1600px;
+  }
+  .frame {
+    border-radius: 14px;
+    padding: 6px;
+    background: linear-gradient(160deg, rgba(217, 70, 239, 0.5), rgba(124, 92, 255, 0.25) 40%, rgba(59, 91, 255, 0.45));
+    box-shadow: 0 40px 80px -30px rgba(124, 92, 255, 0.6);
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .frame img {
+    width: 100%;
+    height: auto;
+    border-radius: 9px;
+  }
+  .shot-0 .frame {
+    transform: rotateY(14deg) translateZ(-30px);
+  }
+  .shot-1 .frame {
+    transform: translateY(-24px);
+  }
+  .shot-2 .frame {
+    transform: rotateY(-14deg) translateZ(-30px);
+  }
+  .shot:hover .frame {
+    transform: none;
+  }
+  figcaption {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 22px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--text);
+  }
+  figcaption span {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 0.75rem;
+    color: var(--accent-hi);
+  }
+  figure {
+    margin: 0;
+  }
+
+  @media (max-width: 760px) {
+    .shots {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      justify-content: flex-start;
+      padding: 30px var(--gutter) 10px;
+      margin-inline: calc(var(--gutter) * -1);
+      scrollbar-width: none;
+    }
+    .shots::-webkit-scrollbar {
+      display: none;
+    }
+    .shot {
+      flex: 0 0 72%;
+      scroll-snap-align: center;
+    }
+    .shot .frame {
+      transform: none !important;
+    }
+  }
+</style>

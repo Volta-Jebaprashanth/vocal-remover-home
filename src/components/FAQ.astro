@@ -1,0 +1,147 @@
+---
+import Icon from './Icon.astro';
+import { CONTACT } from '../data/site';
+
+const faqs = [
+  {
+    q: 'Is it really free?',
+    a: 'Yes. No trial, no watermark, no account and no per-song limits. It runs on your own hardware, so there are no server costs to pass on.',
+  },
+  {
+    q: 'Windows says “Windows protected your PC”. Is it safe?',
+    a: 'This is Microsoft SmartScreen. It shows for apps that aren’t code-signed (a certificate costs money every year, which doesn’t make sense for a free project). Click <b>More info → Run anyway</b>. The installer is built from the public source on GitHub and installs only for your user account, with no admin prompt.',
+  },
+  {
+    q: 'What are the system requirements?',
+    a: 'Windows 10 or 11 (64-bit). About 1.5 GB of disk space for the app plus the models you use. 2-stem vocal removal runs comfortably on most PCs. For 4 and 5-stem modes on long songs, 8 GB of RAM or more is recommended. No GPU is needed.',
+  },
+  {
+    q: 'Why does it need internet the first time?',
+    a: 'To keep the installer small, the AI models aren’t bundled. The first time you use a mode (2, 4 or 5 stems), its model downloads once (about 100–200 MB). After that, separation works fully offline. The YouTube features download a small helper tool the same way.',
+  },
+  {
+    q: 'Do my songs get uploaded anywhere?',
+    a: 'Never. All processing happens locally on your computer. The only things the app downloads are the AI models and the YouTube helper tool. Your audio never leaves your machine.',
+  },
+  {
+    q: 'Which audio formats are supported?',
+    a: 'Input: MP3, WAV, FLAC, M4A, AAC, OGG and WMA. Output: WAV, FLAC, or MP3 at 128, 192, 256 or 320 kbps.',
+  },
+  {
+    q: 'How good is the separation?',
+    a: 'Vocal Remover uses Spleeter, Deezer’s well-known separation model. Results are very good on most commercial music. Dense mixes and heavy reverb can leave faint artifacts. Use <b>Best quality</b> for final exports and <b>Fast preview</b> for quick checks.',
+  },
+  {
+    q: 'Can I use the stems commercially?',
+    a: 'The app puts no restrictions on its output, but the rights to the original song still belong to its owners. Separating a track doesn’t change who owns it. Use stems for personal practice, study, or with music you have the rights to.',
+  },
+  {
+    q: 'I found a bug / have a feature idea.',
+    a: `Open an issue on GitHub, or contact me directly at <a href="mailto:${CONTACT.email}">${CONTACT.email}</a> or on WhatsApp at <a href="${CONTACT.whatsapp}" target="_blank" rel="noopener">${CONTACT.phone}</a>.`,
+  },
+];
+---
+
+<section class="section" id="faq">
+  <div class="container faq-wrap">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">FAQ</span>
+      <h2>Questions, answered.</h2>
+      <p>Can't find what you need? <a class="link" href="#contact">Get in touch</a>.</p>
+    </div>
+
+    <div class="faq">
+      {
+        faqs.map((f, i) => (
+          <details class="item" data-reveal style={`--delay:${Math.min(i, 4) * 0.04}s`} open={i === 0}>
+            <summary>
+              <span>{f.q}</span>
+              <Icon name="chevron" size={20} class="chev" />
+            </summary>
+            <div class="ans" set:html={f.a} />
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(24px, 5vw, 64px);
+    align-items: start;
+  }
+  .faq-wrap .section-head {
+    position: sticky;
+    top: calc(var(--header-h) + 32px);
+  }
+  .link {
+    color: var(--accent-hi);
+    border-bottom: 1px solid rgba(155, 133, 255, 0.4);
+  }
+  .faq {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .item {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: rgba(20, 21, 31, 0.6);
+    backdrop-filter: blur(10px);
+    transition: border-color 0.25s, background 0.25s;
+  }
+  .item[open] {
+    border-color: var(--line-strong);
+    background: rgba(28, 30, 43, 0.7);
+  }
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.04rem;
+    color: #fff;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary :global(.chev) {
+    flex: none;
+    color: var(--muted);
+    transition: transform 0.3s, color 0.3s;
+  }
+  .item[open] summary :global(.chev) {
+    transform: rotate(180deg);
+    color: var(--accent-hi);
+  }
+  .ans {
+    padding: 0 20px 20px;
+    color: var(--muted-2);
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+  .ans :global(b) {
+    color: #fff;
+    font-weight: 600;
+  }
+  .ans :global(a) {
+    color: var(--accent-hi);
+    border-bottom: 1px solid rgba(155, 133, 255, 0.4);
+  }
+  @media (max-width: 900px) {
+    .faq-wrap {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .faq-wrap .section-head {
+      position: static;
+    }
+  }
+</style>

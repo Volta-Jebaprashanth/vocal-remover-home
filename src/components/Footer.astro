@@ -1,0 +1,160 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo-trim.png';
+import Icon from './Icon.astro';
+import { CONTACT, REPO_URL, RELEASES_URL } from '../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="f-top">
+      <div class="f-brand">
+        <Image src={logo} alt="Vocal Remover" width={150} densities={[1, 2]} />
+        <p>Free AI stem separation for Windows. Runs on your PC, with nothing uploaded and nothing to configure.</p>
+        <div class="socials">
+          <a href={`mailto:${CONTACT.email}`} aria-label="Email"><Icon name="mail" size={18} /></a>
+          <a href={CONTACT.phoneHref} aria-label="Call"><Icon name="phone" size={18} /></a>
+          <a href={CONTACT.whatsapp} target="_blank" rel="noopener" aria-label="WhatsApp"><Icon name="whatsapp" size={18} /></a>
+          <a href={CONTACT.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn"><Icon name="linkedin" size={18} /></a>
+          <a href={CONTACT.github} target="_blank" rel="noopener" aria-label="GitHub"><Icon name="github" size={18} /></a>
+        </div>
+      </div>
+
+      <nav class="f-col" aria-label="Product">
+        <h4>Product</h4>
+        <a href="#features">Features</a>
+        <a href="#stems">Stem modes</a>
+        <a href="#youtube">YouTube</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <nav class="f-col" aria-label="Project">
+        <h4>Project</h4>
+        <a href={RELEASES_URL} target="_blank" rel="noopener">Releases</a>
+        <a href={REPO_URL} target="_blank" rel="noopener">Source code</a>
+        <a href={`${REPO_URL}/issues`} target="_blank" rel="noopener">Report an issue</a>
+        <a href="https://github.com/deezer/spleeter" target="_blank" rel="noopener">Spleeter by Deezer</a>
+      </nav>
+      <div class="f-col">
+        <h4>Contact</h4>
+        <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+        <a href={CONTACT.phoneHref}>{CONTACT.phone}</a>
+        <a href={CONTACT.whatsapp} target="_blank" rel="noopener">WhatsApp</a>
+        <a href={CONTACT.linkedin} target="_blank" rel="noopener">LinkedIn · {CONTACT.linkedinHandle}</a>
+      </div>
+    </div>
+
+    <div class="f-bottom">
+      <p>© {year} {CONTACT.name} · Volta Softwares</p>
+      <p>Built with ❤️ by Volta · Separation powered by <a href="https://github.com/deezer/spleeter" target="_blank" rel="noopener">Spleeter</a></p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    padding: 64px 0 32px;
+    border-top: 1px solid var(--line);
+    background: linear-gradient(180deg, rgba(12, 13, 23, 0.4), rgba(7, 7, 13, 0.95));
+  }
+  .footer::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: var(--grad);
+    opacity: 0.7;
+  }
+  .f-top {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1.3fr;
+    gap: 40px;
+  }
+  .f-brand :global(img) {
+    width: 150px;
+    height: auto;
+  }
+  .f-brand p {
+    margin-top: 16px;
+    max-width: 320px;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .socials {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .socials a {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    color: var(--muted-2);
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+  }
+  .socials a:hover {
+    color: #fff;
+    border-color: var(--line-strong);
+    background: rgba(124, 92, 255, 0.14);
+  }
+  .f-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 0.9rem;
+  }
+  .f-col h4 {
+    margin-bottom: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .f-col a {
+    color: var(--muted-2);
+    overflow-wrap: anywhere;
+    transition: color 0.2s;
+  }
+  .f-col a:hover {
+    color: #fff;
+  }
+  .f-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .f-bottom a {
+    color: var(--muted-2);
+  }
+  .f-bottom a:hover {
+    color: #fff;
+  }
+  @media (max-width: 900px) {
+    .f-top {
+      grid-template-columns: 1fr 1fr;
+    }
+    .f-brand {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 480px) {
+    .f-top {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,168 @@
+---
+import Icon from './Icon.astro';
+
+const pillars = [
+  {
+    icon: 'lock',
+    title: 'Your music never leaves your PC',
+    text: 'Separation runs locally on your CPU. No uploads, no accounts, no cloud queue and no per-song fees.',
+  },
+  {
+    icon: 'shield',
+    title: 'Crash-isolated batches',
+    text: 'Every song runs in its own fresh worker process. If one file runs out of memory, the rest of the album still finishes.',
+  },
+  {
+    icon: 'cpu',
+    title: 'Powered by Spleeter',
+    text: "Deezer's open-source separation engine, built on TensorFlow, does the actual splitting.",
+  },
+  {
+    icon: 'zap',
+    title: 'Instant startup, zero setup',
+    text: 'The installer bundles Python, TensorFlow and ffmpeg, and installs per-user with no admin prompt.',
+  },
+];
+---
+
+<section class="section" id="engine">
+  <div class="container engine-grid">
+    <div>
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Under the hood</span>
+        <h2>Private by design.<br /><span class="grad-text">Robust by architecture.</span></h2>
+        <p>
+          The app does its AI work on your own machine. A lightweight UI process hands each song to an isolated
+          worker that loads the model, separates the song, reports progress and exits.
+        </p>
+      </div>
+      <div class="pillars">
+        {
+          pillars.map((p, i) => (
+            <div class="pillar" data-reveal style={`--delay:${i * 0.06}s`}>
+              <span class="p-icon">
+                <Icon name={p.icon as any} size={20} />
+              </span>
+              <div>
+                <h3>{p.title}</h3>
+                <p>{p.text}</p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="term glass" data-reveal style="--delay:.1s" aria-label="Example worker log">
+      <div class="term-bar">
+        <Icon name="terminal" size={14} />
+        <span>worker · song 2 of 3</span>
+      </div>
+      <pre><code><span class="c"># UI process spawns one isolated worker per song</span>
+<span class="p">$</span> VocalRemover.exe --worker-job job-02.json
+
+<span class="k">JOBEVENT</span> {"{"}<span class="s">"event"</span>: <span class="s">"status"</span>, <span class="s">"text"</span>: <span class="v">"Loading 5stems model..."</span>{"}"}
+<span class="k">JOBEVENT</span> {"{"}<span class="s">"event"</span>: <span class="s">"status"</span>, <span class="s">"text"</span>: <span class="v">"Separating song.mp3..."</span>{"}"}
+<span class="k">JOBEVENT</span> {"{"}<span class="s">"event"</span>: <span class="s">"file_done"</span>, <span class="s">"outputs"</span>: [
+           <span class="v">"song_drums.wav"</span>, <span class="v">"song_bass.wav"</span>,
+           <span class="v">"song_piano.wav"</span>, <span class="v">"song_other.wav"</span>]{"}"}
+<span class="ok">✓ worker exited cleanly</span> <span class="c">→ next song</span>
+
+<span class="c"># model cached at %LOCALAPPDATA%\VocalRemover</span>
+<span class="c"># network: none</span><span class="cursor"></span></code></pre>
+    </div>
+  </div>
+</section>
+
+<style>
+  .engine-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(32px, 6vw, 72px);
+    align-items: center;
+  }
+  .pillars {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 28px;
+  }
+  .pillar {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .p-icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    color: var(--accent-hi);
+    background: rgba(124, 92, 255, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(124, 92, 255, 0.35);
+  }
+  .pillar h3 {
+    font-size: 1.02rem;
+  }
+  .pillar p {
+    margin-top: 6px;
+    font-size: 0.9rem;
+    color: var(--muted-2);
+  }
+  .term {
+    background: rgba(9, 9, 16, 0.85);
+    box-shadow: 0 40px 90px -30px rgba(124, 92, 255, 0.55);
+  }
+  .term-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+  pre {
+    margin: 0;
+    padding: 20px;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    line-height: 1.75;
+    color: var(--text);
+  }
+  .c { color: #5f6385; }
+  .p { color: var(--accent-hi); }
+  .k { color: var(--magenta); }
+  .s { color: #a5b4fc; }
+  .v { color: var(--cyan); }
+  .ok { color: var(--green); }
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1.1em;
+    margin-left: 4px;
+    vertical-align: text-bottom;
+    background: var(--accent-hi);
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  @media (max-width: 960px) {
+    .engine-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 520px) {
+    .pillars {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    pre {
+      font-size: 0.7rem;
+      padding: 16px;
+    }
+  }
+</style>
